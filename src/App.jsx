@@ -1,6 +1,6 @@
 import MainLayout from "./layouts/Main";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ProductCatalog } from "./pages";
+import { ProductCatalog, ProductDetails } from "./pages";
 
 const routes = [
   {
@@ -10,6 +10,10 @@ const routes = [
       {
         index: true,
         element: <ProductCatalog />,
+      },
+      {
+        path: "products/:slug",
+        element: <ProductDetails />,
       },
     ],
   },

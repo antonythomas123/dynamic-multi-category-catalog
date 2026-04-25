@@ -1,11 +1,12 @@
 import {
   Box,
-  Button,
   Card,
   CardContent,
   CardMedia,
   Typography,
 } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
+import { getProductSlug } from "../utils/getProductSlug";
 
 const ProductCard = ({ product }) => {
   const getProductType = (product) =>
@@ -15,19 +16,26 @@ const ProductCard = ({ product }) => {
 
   return (
     <Card
-      component="article"
+      component={RouterLink}
+      to={`/products/${getProductSlug(product.itemname)}`}
       sx={{
         bgcolor: "precision.surfaceContainerLowest",
         borderRadius: 2,
         boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.05)",
+        color: "inherit",
         display: "flex",
         flexDirection: "column",
         height: "100%",
         overflow: "hidden",
+        textDecoration: "none",
         transition: "transform 180ms ease, box-shadow 180ms ease",
         "&:hover": {
           boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.08)",
           transform: "translateY(-3px)",
+        },
+        "&:focus-visible": {
+          boxShadow: "0 0 0 3px rgba(0, 53, 95, 0.22)",
+          outline: "none",
         },
         "&:hover .product-image": {
           transform: "scale(1.05)",
@@ -80,21 +88,10 @@ const ProductCard = ({ product }) => {
           variant="body2"
           sx={{
             color: "precision.outline",
-            mb: 3,
           }}
         >
           {getProductType(product)}
         </Typography>
-        <Button
-          fullWidth
-          variant="contained"
-          sx={{
-            mt: "auto",
-            py: 1.4,
-          }}
-        >
-          View Details
-        </Button>
       </CardContent>
     </Card>
   );
