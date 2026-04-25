@@ -185,7 +185,6 @@ export const theme = createTheme({
           "--space-md": "24px",
           "--space-lg": "48px",
           "--space-xl": "80px",
-          "--container-max": "1280px",
           "--gutter": "24px",
           "--radius-sm": "0.25rem",
           "--radius": "0.5rem",

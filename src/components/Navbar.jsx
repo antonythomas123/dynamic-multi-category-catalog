@@ -24,9 +24,8 @@ const Navbar = () => {
       }}
     >
       <Container
-        maxWidth={false}
+        maxWidth="lg"
         sx={{
-          maxWidth: 1280,
           px: { xs: 2, sm: 3 },
         }}
       >

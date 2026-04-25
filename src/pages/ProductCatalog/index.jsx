@@ -1,32 +1,42 @@
-import {
-  Box,
-  Container,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { useMemo, useState } from "react";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import { products } from "../../data/products";
 import ProductCard from "../../components/ProductCard";
+import ProductFilter from "../../components/ProductFilter";
 
-const productsByCategory = products.reduce((sections, product) => {
-  const existingSection = sections.find(
-    (section) => section.category === product.category,
-  );
+const getFilterOptions = (items) => [
+  { label: "All", category: "All" },
+  ...Array.from(new Set(items.map((product) => product.category))).map(
+    (category) => ({
+      label: category,
+      category,
+    }),
+  ),
+];
 
-  if (existingSection) {
-    existingSection.products.push(product);
-    return sections;
-  }
+const groupProductsByCategory = (items) =>
+  items.reduce((sections, product) => {
+    const existingSection = sections.find(
+      (section) => section.category === product.category,
+    );
 
-  return [
-    ...sections,
-    {
-      category: product.category,
-      products: [product],
-    },
-  ];
-}, []);
+    if (existingSection) {
+      existingSection.products.push(product);
+      return sections;
+    }
 
-const ProductSection = ({ section }) => (
+    return [
+      ...sections,
+      {
+        category: product.category,
+        products: [product],
+      },
+    ];
+  }, []);
+
+
+
+const ProductSection = ({ isFiltered, section }) => (
   <Box component="section" sx={{ mb: { xs: 7, md: 10 } }}>
     <Stack
       sx={{
@@ -50,17 +60,25 @@ const ProductSection = ({ section }) => (
     <Box
       id={section.category.toLowerCase()}
       sx={{
-        display: "flex",
+        display: isFiltered ? "grid" : "flex",
         gap: 3,
-        overflowX: "auto",
-        overflowY: "hidden",
+        gridTemplateColumns: isFiltered
+          ? {
+              xs: "1fr",
+              sm: "repeat(2, minmax(0, 1fr))",
+              md: "repeat(3, minmax(0, 1fr))",
+              lg: "repeat(4, minmax(0, 1fr))",
+            }
+          : undefined,
+        overflowX: isFiltered ? "visible" : "auto",
+        overflowY: isFiltered ? "visible" : "hidden",
         pb: 1,
-        scrollPaddingInline: { xs: 16, sm: 24 },
-        scrollSnapType: "x proximity",
-        scrollbarWidth: "none",
-        WebkitOverflowScrolling: "touch",
+        scrollPaddingInline: isFiltered ? undefined : { xs: 16, sm: 24 },
+        scrollSnapType: isFiltered ? undefined : "x proximity",
+        scrollbarWidth: isFiltered ? undefined : "none",
+        WebkitOverflowScrolling: isFiltered ? undefined : "touch",
         "&::-webkit-scrollbar": {
-          display: "none",
+          display: isFiltered ? undefined : "none",
         },
       }}
     >
@@ -68,12 +86,12 @@ const ProductSection = ({ section }) => (
         <Box
           key={product.itemname}
           sx={{
-            flex: "0 0 auto",
-            scrollSnapAlign: "start",
+            flex: isFiltered ? undefined : "0 0 auto",
+            scrollSnapAlign: isFiltered ? undefined : "start",
             width: {
-              xs: "min(82vw, 320px)",
-              sm: 300,
-              md: 310,
+              xs: isFiltered ? "100%" : "min(82vw, 320px)",
+              sm: isFiltered ? "100%" : 300,
+              md: isFiltered ? "100%" : 310,
             },
           }}
         >
@@ -85,19 +103,48 @@ const ProductSection = ({ section }) => (
 );
 
 const ProductCatalog = () => {
+  const [activeCategory, setActiveCategory] = useState("All");
+
+  const filterOptions = useMemo(() => getFilterOptions(products), []);
+
+  const visibleProducts = useMemo(
+    () =>
+      activeCategory === "All"
+        ? products
+        : products.filter((product) => product.category === activeCategory),
+    [activeCategory],
+  );
+
+  const productsByCategory = useMemo(
+    () => groupProductsByCategory(visibleProducts),
+    [visibleProducts],
+  );
+  
+  const isFiltered = activeCategory !== "All";
+
   return (
-    <Container
-      maxWidth={false}
-      sx={{
-        maxWidth: 1280,
-        px: { xs: 2, sm: 3 },
-        py: { xs: 4, md: 6 },
-      }}
-    >
-      {productsByCategory.map((section) => (
-        <ProductSection key={section.category} section={section} />
-      ))}
-    </Container>
+    <>
+      <ProductFilter
+        activeCategory={activeCategory}
+        filterOptions={filterOptions}
+        onFilterChange={setActiveCategory}
+      />
+      <Container
+        maxWidth="lg"
+        sx={{
+          px: { xs: 2, sm: 3 },
+          py: { xs: 4, md: 6 },
+        }}
+      >
+        {productsByCategory.map((section) => (
+          <ProductSection
+            key={section.category}
+            isFiltered={isFiltered}
+            section={section}
+          />
+        ))}
+      </Container>
+    </>
   );
 };
 
