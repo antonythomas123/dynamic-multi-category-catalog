@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Box, Container, Stack, Typography } from "@mui/material";
-import { products } from "../../data/products";
+import products from "../../data/products.json";
 import ProductCard from "../../components/ProductCard";
 import ProductFilter from "../../components/ProductFilter";
 

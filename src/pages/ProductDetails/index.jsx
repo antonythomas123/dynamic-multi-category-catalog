@@ -1,13 +1,6 @@
-import {
-  Box,
-  Chip,
-  Container,
-  Link,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Chip, Container, Link, Stack, Typography } from "@mui/material";
 import { Link as RouterLink, Navigate, useParams } from "react-router-dom";
-import { products } from "../../data/products";
+import products from "../../data/products.json";
 import { getProductSlug } from "../../utils/getProductSlug";
 
 const ProductDetails = () => {
